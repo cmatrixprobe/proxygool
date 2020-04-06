@@ -1,16 +1,27 @@
 package main
 
 import (
-	"github.com/cmatrixprobe/proxygool/cache"
-	_ "github.com/cmatrixprobe/proxygool/config"
-	"log"
+	"github.com/cmatrixprobe/proxygool/api"
+	"github.com/cmatrixprobe/proxygool/global"
+	"github.com/cmatrixprobe/proxygool/store"
 )
 
+
+
 func main() {
-	c := cache.Pool().Get()
-	reply, err := c.Do("PING")
-	if err != nil {
-		panic(err)
-	}
-	log.Println(reply)
+	//addressChan := make(chan *model.Address, 1000)
+
+	//logrus.SetReportCaller(true)
+
+	// Start HTTP server
+	go func() {
+		api.Run()
+	}()
+
+	// Check proxies in DB
+	go func() {
+		store.CheckProxyDB(global.GetStore())
+	}()
+
+	select {}
 }

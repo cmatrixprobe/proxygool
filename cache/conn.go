@@ -23,7 +23,7 @@ func newPool() *redis.Pool {
 	IdleTimeout := redisConfig.GetDuration("IdleTimeout")
 	testFrequency := redisConfig.GetDuration("testFrequency")
 	Wait := redisConfig.GetBool("Wait")
-	ip := redisConfig.GetString("ip")
+	ip := redisConfig.GetString("host")
 	port := redisConfig.GetString("port")
 	address := ip + ":" + port
 
@@ -49,6 +49,6 @@ func newPool() *redis.Pool {
 	}
 }
 
-func Pool() *redis.Pool {
+func GetPool() *redis.Pool {
 	return pool
 }
