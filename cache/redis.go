@@ -28,7 +28,7 @@ func (s *RedisStore) Set(address *model.Address) error {
 	c := s.pool.Get()
 	defer c.Close()
 
-	addr := util.CombAddr(address.Host, address.Port)
+	addr := util.CombAddr(address)
 	_, err := c.Do("SADD", s.proxyPool, addr)
 	_, err = c.Do("HSET", s.proxyInfo, addr, util.AddressMarshal(address))
 	return err
@@ -104,7 +104,7 @@ func (s *RedisStore) Update(address *model.Address) error {
 	c := s.pool.Get()
 	defer c.Close()
 
-	addr := util.CombAddr(address.Host, address.Port)
+	addr := util.CombAddr(address)
 	_, err := c.Do("HSET", s.proxyInfo, addr, util.AddressMarshal(address))
 	return err
 }

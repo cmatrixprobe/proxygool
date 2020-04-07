@@ -1,15 +1,16 @@
 package config
 
 import (
-	"fmt"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 func init() {
+	// read config from [Project]/config/application.yaml
 	viper.AddConfigPath("./config")
 	viper.SetConfigName("application")
 	viper.SetConfigType("yaml")
 	if err := viper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("Fatal error config file: %s\n", err))
+		logrus.Fatal(err)
 	}
 }

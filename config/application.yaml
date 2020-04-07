@@ -14,15 +14,20 @@ redis:
   proxyPool: proxypool
   proxyInfo: proxyinfo
 fetch:
-  proxy:
+  proxy: false
 xicidaili:
-  pages: 1
+  pages: 5
 kuaidaili:
   pages: 5
-proxylistplus:
-  http:
-    pages: 5
-  https:
-    pages: 1
 ip3366:
   pages: 5
+7yip:
+  pages: 5
+66ip:
+  pages: 5
+89ip:
+  pages: 5
+plphttp:
+  pages: 5
+plphttps:
+  pages: 1

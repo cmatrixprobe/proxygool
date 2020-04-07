@@ -2,6 +2,8 @@ package fetch
 
 import (
 	browser "github.com/EDDYCJY/fake-useragent"
+	"github.com/cmatrixprobe/proxygool/store"
+	"github.com/cmatrixprobe/proxygool/util"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"net/http"
@@ -9,24 +11,24 @@ import (
 	"time"
 )
 
-var transport *http.Transport
+// Fetch downloads target pages to local.
+func Fetch(webUrl string) (*http.Response, error) {
+	client := &http.Client{
+		Timeout: time.Second * 10,
+	}
 
-func init() {
-	proxy := viper.GetString("fetch.proxy")
-	if proxy != "" {
+	// fetch by proxy
+	if viper.GetBool("fetch.proxy") == true && store.CountProxy() > 0 {
+		proxy := util.CombUrl(store.RandomOne())
 		urlproxy, err := new(url.URL).Parse(proxy)
 		if err != nil {
 			logrus.WithField("proxy", proxy).Error(err)
+		} else {
+			logrus.WithField("proxy", proxy).Info("Fetch by proxy")
 		}
-		transport.Proxy = http.ProxyURL(urlproxy)
-	}
-}
-
-// Fetch returns target pages
-func Fetch(webUrl string) (*http.Response, error) {
-	client := &http.Client{
-		//Transport: transport,
-		Timeout:   time.Second * 10,
+		client.Transport = &http.Transport{
+			Proxy: http.ProxyURL(urlproxy),
+		}
 	}
 
 	request, err := http.NewRequest("GET", webUrl, nil)

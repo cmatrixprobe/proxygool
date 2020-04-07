@@ -21,17 +21,9 @@ func ValidateProxy(address *model.Address) {
 
 // CheckAddress checks the address work or not.
 func CheckAddress(address *model.Address) bool {
-	var testAddr, targetUrl string
-
 	// test by speedtest.cn
-	switch address.Protocol {
-	case "https":
-		testAddr = "https://" + util.CombAddr(address.Host, address.Port)
-		targetUrl = "https://forge.speedtest.cn/api/location/geo?ip=" + address.Host
-	case "http":
-		testAddr = "http://" + util.CombAddr(address.Host, address.Port)
-		targetUrl = "http://forge.speedtest.cn/api/location/geo?ip=" + address.Host
-	}
+	testAddr := util.CombUrl(address)
+	targetUrl := address.Protocol + "://forge.speedtest.cn/api/location/geo?ip=" + address.Host
 
 	reqLogger := logrus.WithFields(logrus.Fields{
 		"testAddr":  testAddr,
@@ -64,7 +56,7 @@ func CheckAddress(address *model.Address) bool {
 		reqLogger.Warn(err)
 		return false
 	}
-	var tr TestResponse
+	var tr model.TestResponse
 	err = json.Unmarshal(info, &tr)
 	if err != nil {
 		reqLogger.Warn(err)
@@ -80,7 +72,7 @@ func CheckAddress(address *model.Address) bool {
 	return true
 }
 
-// CheckProxyDB checks proxy addresses in DB
+// CheckProxyDB checks proxy addresses in DB.
 func CheckProxyDB() {
 	addresses, err := storage.GetAll()
 	if err != nil {
@@ -115,7 +107,7 @@ func CheckProxyDB() {
 
 // SyncSpeed
 func SyncSpeed(address *model.Address) {
-	addr := util.CombAddr(address.Host, address.Port)
+	addr := util.CombAddr(address)
 	err := storage.Update(address)
 	if err != nil {
 		logrus.WithField("addr", addr).Warn(err)
@@ -124,7 +116,7 @@ func SyncSpeed(address *model.Address) {
 
 // DeleteProxy
 func DeleteProxy(address *model.Address) {
-	addr := util.CombAddr(address.Host, address.Port)
+	addr := util.CombAddr(address)
 	err := storage.Delete(addr)
 	if err != nil {
 		logrus.WithField("addr", addr).Warn(err)

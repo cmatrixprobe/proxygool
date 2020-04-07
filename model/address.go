@@ -1,5 +1,6 @@
 package model
 
+// Address
 type Address struct {
 	Host     string
 	Port     string
@@ -8,6 +9,7 @@ type Address struct {
 	Origin   string
 }
 
+// NewAddress
 func NewAddress() *Address {
 	return new(Address)
 }

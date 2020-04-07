@@ -25,7 +25,7 @@ func Run() {
 	logrus.Fatal(r.Run(address))
 }
 
-// HttpProxyHandler
+// RandomProxyHandler
 func RandomProxyHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, store.RandomOne())
 }

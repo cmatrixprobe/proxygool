@@ -49,6 +49,7 @@ func newPool() *redis.Pool {
 	}
 }
 
+// GetPool returns a redis connection pool
 func GetPool() *redis.Pool {
 	return pool
 }

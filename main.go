@@ -19,34 +19,40 @@ func main() {
 	}()
 
 	// Check proxies in DB
-	ticker1 := time.NewTicker(time.Minute)
+	ticker := time.NewTicker(time.Minute)
 	go func() {
 		for {
 			store.CheckProxyDB()
-			<-ticker1.C
+			<-ticker.C
 		}
 	}()
 
-	addressChan := make(chan *model.Address, 1000)
+	addressChan := make(chan *model.Address, 2000)
 	// Check proxies in channel
 	for i := 0; i < 1000; i++ {
 		go func() {
-			for address := range addressChan {
-				store.ValidateProxy(address)
+			for {
+				if address, ok := <-addressChan; ok {
+					store.ValidateProxy(address)
+				}
 			}
 		}()
 	}
 
 	// Crawl proxies
-	ticker2 := time.NewTicker(time.Minute)
+	done := make(chan bool)
+	tick := time.NewTicker(time.Minute)
 	for {
 		logrus.WithFields(logrus.Fields{
 			"Channel": len(addressChan),
 			"DB":      store.CountProxy(),
 		}).Info()
 		if len(addressChan) < cap(addressChan)>>1 {
-			go spider.Run(addressChan)
+			go spider.Run(addressChan, done)
 		}
-		<-ticker2.C
+		select {
+		case <-done:
+		case <-tick.C:
+		}
 	}
 }
