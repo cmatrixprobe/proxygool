@@ -6,13 +6,26 @@ import (
 	"github.com/cmatrixprobe/proxygool/spider"
 	"github.com/cmatrixprobe/proxygool/store"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+	"io"
+	"os"
 	"time"
 )
 
-func main() {
+func init() {
 	//logrus.SetReportCaller(true)
-	//logrus.SetLevel(logrus.WarnLevel)
+	if viper.GetBool("docker") == true {
+		logrus.SetLevel(logrus.PanicLevel)
+	}
 
+	file, err := os.OpenFile("proxygool.log", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	logrus.SetOutput(io.MultiWriter(os.Stdout, file))
+}
+
+func main() {
 	// Start HTTP server
 	go func() {
 		api.Run()

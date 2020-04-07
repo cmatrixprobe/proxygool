@@ -14,7 +14,7 @@ func init() {
 }
 
 func newPool() *redis.Pool {
-	// Read configuration from application.yaml
+	// Read configuration from application.yml
 	redisConfig := viper.Sub("redis")
 	network := redisConfig.GetString("network")
 	password := redisConfig.GetString("password")
@@ -26,6 +26,11 @@ func newPool() *redis.Pool {
 	ip := redisConfig.GetString("host")
 	port := redisConfig.GetString("port")
 	address := ip + ":" + port
+
+	if viper.GetBool("docker") == true {
+		address = "redis:6379"
+		password = ""
+	}
 
 	return &redis.Pool{
 		MaxIdle:     MaxIdle,

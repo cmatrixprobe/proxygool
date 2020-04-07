@@ -6,10 +6,10 @@ import (
 )
 
 func init() {
-	// read config from [Project]/config/application.yaml
+	// read config from [Project]/config/application.yml
 	viper.AddConfigPath("./config")
 	viper.SetConfigName("application")
-	viper.SetConfigType("yaml")
+	viper.SetConfigType("yml")
 	if err := viper.ReadInConfig(); err != nil {
 		logrus.Fatal(err)
 	}

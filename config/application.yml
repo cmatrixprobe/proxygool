@@ -1,11 +1,12 @@
+docker: true
 server:
-  host: localhost
+  host: 0.0.0.0
   port: 8888
 redis:
   network: tcp
   host: 127.0.0.1
   port: 6379
-  password: 123456
+  password:
   MaxIdle: 100
   MaxActive: 0
   IdleTimeout: 5m
@@ -14,7 +15,7 @@ redis:
   proxyPool: proxypool
   proxyInfo: proxyinfo
 fetch:
-  proxy: false
+  proxy: true
 xicidaili:
   pages: 5
 kuaidaili:
