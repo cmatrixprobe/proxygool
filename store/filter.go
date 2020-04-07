@@ -12,10 +12,10 @@ import (
 	"time"
 )
 
-// CheckProxy
-func CheckProxy(store Store, address *model.Address) {
+// ValidateProxy
+func ValidateProxy(address *model.Address) {
 	if CheckAddress(address) {
-		InsertProxy(store, address)
+		InsertProxy(address)
 	}
 }
 
@@ -81,15 +81,15 @@ func CheckAddress(address *model.Address) bool {
 }
 
 // CheckProxyDB checks proxy addresses in DB
-func CheckProxyDB(store Store) {
-	addresses, err := store.GetAll()
+func CheckProxyDB() {
+	addresses, err := storage.GetAll()
 	if err != nil {
 		logrus.Warn(err)
 		return
 	}
 
 	// check and delete unavailable records
-	count, err := store.Count()
+	count, err := storage.Count()
 	if err != nil {
 		logrus.Warn(err)
 	}
@@ -99,14 +99,14 @@ func CheckProxyDB(store Store) {
 		wg.Add(1)
 		go func(v *model.Address) {
 			if !CheckAddress(v) {
-				DeleteProxy(store, v)
+				DeleteProxy(v)
 			} else {
-				SyncSpeed(store, v)
+				SyncSpeed(v)
 			}
 		}(address)
 	}
 	wg.Wait()
-	count, err = store.Count()
+	count, err = storage.Count()
 	if err != nil {
 		logrus.Warn(err)
 	}
@@ -114,26 +114,26 @@ func CheckProxyDB(store Store) {
 }
 
 // SyncSpeed
-func SyncSpeed(store Store, address *model.Address) {
+func SyncSpeed(address *model.Address) {
 	addr := util.CombAddr(address.Host, address.Port)
-	err := store.Update(address)
+	err := storage.Update(address)
 	if err != nil {
 		logrus.WithField("addr", addr).Warn(err)
 	}
 }
 
 // DeleteProxy
-func DeleteProxy(store Store, address *model.Address) {
+func DeleteProxy(address *model.Address) {
 	addr := util.CombAddr(address.Host, address.Port)
-	err := store.Delete(addr)
+	err := storage.Delete(addr)
 	if err != nil {
 		logrus.WithField("addr", addr).Warn(err)
 	}
 }
 
 // RandomHttp
-func RandomOne(store Store) *model.Address {
-	address, err := store.GetRandOne()
+func RandomOne() *model.Address {
+	address, err := storage.GetRandOne()
 	if err != nil {
 		logrus.Error(err)
 		return nil
@@ -142,8 +142,8 @@ func RandomOne(store Store) *model.Address {
 }
 
 // RandomHttps
-func RandomHttps(store Store) *model.Address {
-	address, err := store.GetRandHttps()
+func RandomHttps() *model.Address {
+	address, err := storage.GetRandHttps()
 	if err != nil {
 		logrus.Error(err)
 		return nil
@@ -152,9 +152,19 @@ func RandomHttps(store Store) *model.Address {
 }
 
 // InsertProxy
-func InsertProxy(store Store, address *model.Address) {
-	err := store.Set(address)
+func InsertProxy(address *model.Address) {
+	err := storage.Set(address)
 	if err != nil {
 		logrus.Error(err)
 	}
+}
+
+// CountProxy
+func CountProxy() int64 {
+	count, err := storage.Count()
+	if err != nil {
+		logrus.Error(err)
+		return -1
+	}
+	return count
 }

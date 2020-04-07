@@ -50,7 +50,7 @@ func (s *RedisStore) GetRandOne() (*model.Address, error) {
 	defer c.Close()
 
 	key, err := redis.String(c.Do("SRANDMEMBER", s.proxyPool))
-	res, err := redis.String(c.Do("HGET", s.proxyPool, key))
+	res, err := redis.String(c.Do("HGET", s.proxyInfo, key))
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (s *RedisStore) GetRandHttps() (*model.Address, error) {
 			httpsAddr = append(httpsAddr, addr)
 		}
 	}
-	return util.RandomElement(httpsAddr).(*model.Address), nil
+	return util.RandomElement(httpsAddr), nil
 }
 
 func (s *RedisStore) GetAll() ([]*model.Address, error) {

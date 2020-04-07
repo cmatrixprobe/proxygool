@@ -21,15 +21,20 @@ func AddressMarshal(address *model.Address) string {
 	return string(bytes)
 }
 
-func AddressUnMarshal(str string) (address *model.Address) {
+func AddressUnMarshal(str string) *model.Address {
+	address := model.NewAddress()
 	err := json.Unmarshal([]byte(str), address)
 	if err != nil {
 		logrus.WithField("address", str).Warn(err)
 		return nil
 	}
-	return
+	return address
 }
 
-func RandomElement(arr ...interface{}) interface{} {
-	return arr[rand.New(rand.NewSource(time.Now().Unix())).Intn(len(arr))]
+func RandomElement(addresses []*model.Address) *model.Address {
+	addrLen := len(addresses)
+	if addrLen <= 0 {
+		return nil
+	}
+	return addresses[rand.New(rand.NewSource(time.Now().Unix())).Intn(addrLen)]
 }

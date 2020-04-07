@@ -13,3 +13,16 @@ redis:
   Wait: true
   proxyPool: proxypool
   proxyInfo: proxyinfo
+fetch:
+  proxy:
+xicidaili:
+  pages: 1
+kuaidaili:
+  pages: 5
+proxylistplus:
+  http:
+    pages: 5
+  https:
+    pages: 1
+ip3366:
+  pages: 5

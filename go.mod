@@ -3,7 +3,9 @@ module github.com/cmatrixprobe/proxygool
 go 1.14
 
 require (
-	github.com/bitly/go-simplejson v0.5.0
+	github.com/EDDYCJY/fake-useragent v0.2.0
+	github.com/PuerkitoBio/goquery v1.5.1
+	github.com/elazarl/goproxy v0.0.0-20200315184450-1f3cb6622dad // indirect
 	github.com/gin-gonic/gin v1.6.2
 	github.com/golang/protobuf v1.3.5 // indirect
 	github.com/gomodule/redigo v2.0.0+incompatible

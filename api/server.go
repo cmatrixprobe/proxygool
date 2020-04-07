@@ -1,7 +1,6 @@
 package api
 
 import (
-	"github.com/cmatrixprobe/proxygool/global"
 	"github.com/cmatrixprobe/proxygool/store"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -28,10 +27,10 @@ func Run() {
 
 // HttpProxyHandler
 func RandomProxyHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, store.RandomOne(global.GetStore()))
+	c.JSON(http.StatusOK, store.RandomOne())
 }
 
 // HttpsProxyHandler
 func HttpsProxyHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, store.RandomHttps(global.GetStore()))
+	c.JSON(http.StatusOK, store.RandomHttps())
 }

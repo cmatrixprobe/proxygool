@@ -5,10 +5,9 @@ type Address struct {
 	Port     string
 	Protocol string
 	Speed    int64
+	Origin   string
 }
 
 func NewAddress() *Address {
-	return &Address{
-		Speed:    100,
-	}
+	return new(Address)
 }

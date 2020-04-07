@@ -2,16 +2,16 @@ package main
 
 import (
 	"github.com/cmatrixprobe/proxygool/api"
-	"github.com/cmatrixprobe/proxygool/global"
+	"github.com/cmatrixprobe/proxygool/model"
+	"github.com/cmatrixprobe/proxygool/spider"
 	"github.com/cmatrixprobe/proxygool/store"
+	"github.com/sirupsen/logrus"
+	"time"
 )
 
-
-
 func main() {
-	//addressChan := make(chan *model.Address, 1000)
-
 	//logrus.SetReportCaller(true)
+	//logrus.SetLevel(logrus.WarnLevel)
 
 	// Start HTTP server
 	go func() {
@@ -19,9 +19,34 @@ func main() {
 	}()
 
 	// Check proxies in DB
+	ticker1 := time.NewTicker(time.Minute)
 	go func() {
-		store.CheckProxyDB(global.GetStore())
+		for {
+			store.CheckProxyDB()
+			<-ticker1.C
+		}
 	}()
 
-	select {}
+	addressChan := make(chan *model.Address, 1000)
+	// Check proxies in channel
+	for i := 0; i < 1000; i++ {
+		go func() {
+			for address := range addressChan {
+				store.ValidateProxy(address)
+			}
+		}()
+	}
+
+	// Crawl proxies
+	ticker2 := time.NewTicker(time.Minute)
+	for {
+		logrus.WithFields(logrus.Fields{
+			"Channel": len(addressChan),
+			"DB":      store.CountProxy(),
+		}).Info()
+		if len(addressChan) < cap(addressChan)>>1 {
+			go spider.Run(addressChan)
+		}
+		<-ticker2.C
+	}
 }
