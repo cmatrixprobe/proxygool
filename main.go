@@ -14,11 +14,15 @@ import (
 
 func init() {
 	//logrus.SetReportCaller(true)
+	logFile := viper.GetString("logger.filename")
+	logLevel := viper.GetUint32("logger.level")
+
+	logrus.SetLevel(logrus.Level(logLevel))
 	if viper.GetBool("docker") == true {
-		logrus.SetLevel(logrus.PanicLevel)
+		logrus.SetLevel(logrus.FatalLevel)
 	}
 
-	file, err := os.OpenFile("proxygool.log", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
+	file, err := os.OpenFile(logFile, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -26,12 +30,12 @@ func init() {
 }
 
 func main() {
-	// Start HTTP server
+	// start HTTP server
 	go func() {
 		api.Run()
 	}()
 
-	// Check proxies in DB
+	// check proxies in DB
 	ticker := time.NewTicker(time.Minute)
 	go func() {
 		for {
@@ -41,7 +45,7 @@ func main() {
 	}()
 
 	addressChan := make(chan *model.Address, 2000)
-	// Check proxies in channel
+	// check proxies in channel
 	for i := 0; i < 1000; i++ {
 		go func() {
 			for {
@@ -52,7 +56,7 @@ func main() {
 		}()
 	}
 
-	// Crawl proxies
+	// crawl proxies
 	done := make(chan bool)
 	tick := time.NewTicker(time.Minute)
 	for {

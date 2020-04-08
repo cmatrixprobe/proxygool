@@ -16,14 +16,14 @@ func init() {
 		site.Kuai(),
 		site.IP3366(),
 		site.Qiyun(),
-		//site.PLP(),
-		//site.PLPSSL(),
+		site.PLP(),
+		site.PLPSSL(),
 		site.IP66(),
 		site.IP89(),
 	}
 }
 
-// Run spider
+// Run spider.
 func Run(addressChan chan<- *model.Address, done chan<- bool) {
 	logrus.Info("Crawl started.")
 

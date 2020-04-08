@@ -1,6 +1,6 @@
 package model
 
-// TestResponse
+// TestResponse .
 type TestResponse struct {
 	City        string      `json:"city"`
 	Country     string      `json:"country"`

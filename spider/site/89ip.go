@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// IP89 returns a request to www.89ip.cn for proxies.
 func IP89() *model.Request {
 	req := model.NewRequest()
 	req.WebName = "89ip"

@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Qiyun returns a request to www.7yip.cn for proxies.
 func Qiyun() *model.Request {
 	req := model.NewRequest()
 	req.WebName = "7yip"

@@ -86,6 +86,9 @@ curl localhost:8888/https
 
 ```yaml
 docker: true
+logger:
+  filename: proxygool.log
+  level: 4
 server:
   host: 0.0.0.0
   port: 8888

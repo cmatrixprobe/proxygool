@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-// Request
+// Request .
 type Request struct {
 	WebName   string              // website name
 	WebURL    string              // website url
@@ -17,7 +17,7 @@ type Request struct {
 	Protocol  func(string) string // protocol
 }
 
-// NewRequest
+// NewRequest returns a default request.
 func NewRequest() *Request {
 	return &Request{
 		Pages: 1,

@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Kuai returns a request to www.kuaidaili.com for proxies.
 func Kuai() *model.Request {
 	req := model.NewRequest()
 	req.WebName = "kuaidaili"

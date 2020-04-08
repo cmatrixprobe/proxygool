@@ -12,14 +12,14 @@ import (
 )
 
 // Fetch downloads target pages to local.
-func Fetch(webUrl string) (*http.Response, error) {
+func Fetch(webURL string) (*http.Response, error) {
 	client := &http.Client{
 		Timeout: time.Second * 10,
 	}
 
 	// fetch by proxy
 	if viper.GetBool("fetch.proxy") == true && store.CountProxy() > 0 {
-		proxy := util.CombUrl(store.RandomOne())
+		proxy := util.CombURL(store.RandomOne())
 		urlproxy, err := new(url.URL).Parse(proxy)
 		if err != nil {
 			logrus.WithField("proxy", proxy).Error(err)
@@ -31,7 +31,7 @@ func Fetch(webUrl string) (*http.Response, error) {
 		}
 	}
 
-	request, err := http.NewRequest("GET", webUrl, nil)
+	request, err := http.NewRequest("GET", webURL, nil)
 	if err != nil {
 		return nil, err
 	}

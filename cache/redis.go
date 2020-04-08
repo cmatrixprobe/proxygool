@@ -7,12 +7,14 @@ import (
 	"github.com/spf13/viper"
 )
 
+// RedisStore is an default store for proxy address infos.
 type RedisStore struct {
 	proxyPool string
 	proxyInfo string
 	pool      *redis.Pool
 }
 
+// NewRedisStore returns a new standard redis store for proxies.
 func NewRedisStore() *RedisStore {
 	redisConfig := viper.Sub("redis")
 	proxyPool := redisConfig.GetString("proxyPool")
@@ -24,16 +26,21 @@ func NewRedisStore() *RedisStore {
 	}
 }
 
+// Set .
 func (s *RedisStore) Set(address *model.Address) error {
 	c := s.pool.Get()
 	defer c.Close()
 
 	addr := util.CombAddr(address)
 	_, err := c.Do("SADD", s.proxyPool, addr)
+	if err != nil {
+		return err
+	}
 	_, err = c.Do("HSET", s.proxyInfo, addr, util.AddressMarshal(address))
 	return err
 }
 
+// Get .
 func (s *RedisStore) Get(key string) (*model.Address, error) {
 	c := s.pool.Get()
 	defer c.Close()
@@ -45,11 +52,15 @@ func (s *RedisStore) Get(key string) (*model.Address, error) {
 	return util.AddressUnMarshal(res), nil
 }
 
+// GetRandOne .
 func (s *RedisStore) GetRandOne() (*model.Address, error) {
 	c := s.pool.Get()
 	defer c.Close()
 
 	key, err := redis.String(c.Do("SRANDMEMBER", s.proxyPool))
+	if err != nil {
+		return nil, err
+	}
 	res, err := redis.String(c.Do("HGET", s.proxyInfo, key))
 	if err != nil {
 		return nil, err
@@ -57,7 +68,8 @@ func (s *RedisStore) GetRandOne() (*model.Address, error) {
 	return util.AddressUnMarshal(res), nil
 }
 
-func (s *RedisStore) GetRandHttps() (*model.Address, error) {
+// GetRandHTTPS .
+func (s *RedisStore) GetRandHTTPS() (*model.Address, error) {
 	c := s.pool.Get()
 	defer c.Close()
 
@@ -74,6 +86,7 @@ func (s *RedisStore) GetRandHttps() (*model.Address, error) {
 	return util.RandomElement(httpsAddr), nil
 }
 
+// GetAll .
 func (s *RedisStore) GetAll() ([]*model.Address, error) {
 	c := s.pool.Get()
 	defer c.Close()
@@ -91,15 +104,20 @@ func (s *RedisStore) GetAll() ([]*model.Address, error) {
 	return addresses, nil
 }
 
+// Delete .
 func (s *RedisStore) Delete(key string) error {
 	c := s.pool.Get()
 	defer c.Close()
 
 	_, err := c.Do("SREM", s.proxyPool, key)
+	if err != nil {
+		return err
+	}
 	_, err = c.Do("HDEL", s.proxyInfo, key)
 	return err
 }
 
+// Update .
 func (s *RedisStore) Update(address *model.Address) error {
 	c := s.pool.Get()
 	defer c.Close()
@@ -109,6 +127,7 @@ func (s *RedisStore) Update(address *model.Address) error {
 	return err
 }
 
+// Count .
 func (s *RedisStore) Count() (int64, error) {
 	c := s.pool.Get()
 	defer c.Close()
@@ -116,6 +135,7 @@ func (s *RedisStore) Count() (int64, error) {
 	return redis.Int64(c.Do("SCARD", s.proxyPool))
 }
 
+// Close .
 func (s *RedisStore) Close() error {
 	return s.pool.Close()
 }

@@ -1,7 +1,7 @@
 package cache
 
 import (
-	_ "github.com/cmatrixprobe/proxygool/config"
+	_ "github.com/cmatrixprobe/proxygool/config" // read config to initialize redis pool
 	"github.com/gomodule/redigo/redis"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -41,7 +41,7 @@ func newPool() *redis.Pool {
 		Dial: func() (c redis.Conn, err error) {
 			c, err = redis.Dial(network, address, redis.DialPassword(password))
 			if err != nil {
-				logrus.Fatal(err)
+				logrus.Panic(err)
 			}
 			return c, nil
 		},
@@ -51,14 +51,14 @@ func newPool() *redis.Pool {
 			}
 			_, err := c.Do("PING")
 			if err != nil {
-				logrus.Fatal(err)
+				logrus.Panic(err)
 			}
 			return nil
 		},
 	}
 }
 
-// GetPool returns a redis connection pool
+// GetPool returns a redis connection pool.
 func GetPool() *redis.Pool {
 	return pool
 }

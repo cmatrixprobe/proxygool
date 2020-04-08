@@ -1,6 +1,6 @@
 package model
 
-// Address
+// Address .
 type Address struct {
 	Host     string
 	Port     string
@@ -9,7 +9,7 @@ type Address struct {
 	Origin   string
 }
 
-// NewAddress
+// NewAddress returns a new pointer to address.
 func NewAddress() *Address {
 	return new(Address)
 }

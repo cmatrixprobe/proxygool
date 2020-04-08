@@ -12,28 +12,28 @@ import (
 	"time"
 )
 
-// ValidateProxy
+// ValidateProxy checks addresses and decides whether to store.
 func ValidateProxy(address *model.Address) {
 	if CheckAddress(address) {
-		InsertProxy(address)
+		insertProxy(address)
 	}
 }
 
 // CheckAddress checks the address work or not.
 func CheckAddress(address *model.Address) bool {
 	// test by speedtest.cn
-	testAddr := util.CombUrl(address)
-	targetUrl := address.Protocol + "://forge.speedtest.cn/api/location/geo?ip=" + address.Host
+	testAddr := util.CombURL(address)
+	targetURL := address.Protocol + "://forge.speedtest.cn/api/location/geo?ip=" + address.Host
 
 	reqLogger := logrus.WithFields(logrus.Fields{
 		"testAddr":  testAddr,
-		"targetUrl": targetUrl,
+		"targetURL": targetURL,
 	})
 	reqLogger.Info()
 
 	begin := time.Now()
-	// get targetUrl by test proxy
-	resp, _, errs := gorequest.New().Proxy(testAddr).Get(targetUrl).End()
+	// get targetURL by test proxy
+	resp, _, errs := gorequest.New().Proxy(testAddr).Get(targetURL).End()
 	if errs != nil {
 		reqLogger.Warn(errs)
 		return false
@@ -46,11 +46,6 @@ func CheckAddress(address *model.Address) bool {
 	}
 
 	// verify json
-	//_, err := simplejson.NewFromReader(resp.Body)
-	//if err != nil {
-	//	reqLogger.Error(err)
-	//	return false
-	//}
 	info, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		reqLogger.Warn(err)
@@ -91,9 +86,9 @@ func CheckProxyDB() {
 		wg.Add(1)
 		go func(v *model.Address) {
 			if !CheckAddress(v) {
-				DeleteProxy(v)
+				deleteProxy(v)
 			} else {
-				SyncSpeed(v)
+				syncSpeed(v)
 			}
 		}(address)
 	}
@@ -105,8 +100,7 @@ func CheckProxyDB() {
 	logrus.WithField("record", count).Info("After check")
 }
 
-// SyncSpeed
-func SyncSpeed(address *model.Address) {
+func syncSpeed(address *model.Address) {
 	addr := util.CombAddr(address)
 	err := storage.Update(address)
 	if err != nil {
@@ -114,8 +108,7 @@ func SyncSpeed(address *model.Address) {
 	}
 }
 
-// DeleteProxy
-func DeleteProxy(address *model.Address) {
+func deleteProxy(address *model.Address) {
 	addr := util.CombAddr(address)
 	err := storage.Delete(addr)
 	if err != nil {
@@ -123,7 +116,14 @@ func DeleteProxy(address *model.Address) {
 	}
 }
 
-// RandomHttp
+func insertProxy(address *model.Address) {
+	err := storage.Set(address)
+	if err != nil {
+		logrus.Error(err)
+	}
+}
+
+// RandomOne returns a random address in storage.
 func RandomOne() *model.Address {
 	address, err := storage.GetRandOne()
 	if err != nil {
@@ -133,9 +133,9 @@ func RandomOne() *model.Address {
 	return address
 }
 
-// RandomHttps
-func RandomHttps() *model.Address {
-	address, err := storage.GetRandHttps()
+// RandomHTTPS returns a random address based on https protocol.
+func RandomHTTPS() *model.Address {
+	address, err := storage.GetRandHTTPS()
 	if err != nil {
 		logrus.Error(err)
 		return nil
@@ -143,15 +143,7 @@ func RandomHttps() *model.Address {
 	return address
 }
 
-// InsertProxy
-func InsertProxy(address *model.Address) {
-	err := storage.Set(address)
-	if err != nil {
-		logrus.Error(err)
-	}
-}
-
-// CountProxy
+// CountProxy returns the count of proxies in storage.
 func CountProxy() int64 {
 	count, err := storage.Count()
 	if err != nil {

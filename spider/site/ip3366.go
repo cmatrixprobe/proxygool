@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// IP3366 returns a request to www.ip3366.net for proxies.
 func IP3366() *model.Request {
 	req := model.NewRequest()
 	req.WebName = "ip3366"

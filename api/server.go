@@ -8,14 +8,14 @@ import (
 	"net/http"
 )
 
-// Run HTTP server
+// Run HTTP server.
 func Run() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	r.Use(gin.Recovery())
 
 	r.GET("/", RandomProxyHandler)
-	r.GET("/https", HttpsProxyHandler)
+	r.GET("/https", HTTPSProxyHandler)
 
 	server := viper.Sub("server")
 	ip := server.GetString("host")
@@ -25,12 +25,12 @@ func Run() {
 	logrus.Fatal(r.Run(address))
 }
 
-// RandomProxyHandler
+// RandomProxyHandler returns a random JSON-encoded address.
 func RandomProxyHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, store.RandomOne())
 }
 
-// HttpsProxyHandler
-func HttpsProxyHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, store.RandomHttps())
+// HTTPSProxyHandler returns a random JSON-encoded https protocol address.
+func HTTPSProxyHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, store.RandomHTTPS())
 }

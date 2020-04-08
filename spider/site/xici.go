@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Xici returns a request to www.xicidaili.com for proxies.
 func Xici() *model.Request {
 	req := model.NewRequest()
 	req.WebName = "xicidaili"
