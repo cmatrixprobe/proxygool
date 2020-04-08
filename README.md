@@ -134,6 +134,7 @@ func XXX() *model.Request {
     req.HostIndex = 0
     req.PortIndex = 1
     req.ProtIndex = 3
+    req.Trim = true
     req.Protocol = func(s string) string {
 	if s == "no" {
 	    return "http"
@@ -141,7 +142,6 @@ func XXX() *model.Request {
 	return "https"
     }
     return req
-    req.Trim = true
 }
 
 ```
