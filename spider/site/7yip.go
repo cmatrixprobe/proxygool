@@ -9,7 +9,7 @@ func Qiyun() *model.Request {
 	req := model.NewRequest()
 	req.WebName = "7yip"
 	req.WebURL = "https://www.7yip.cn/free/?action=china&page="
-	req.TrRegexp = ".table tbody tr"
+	req.TrRegular = ".table tbody tr"
 	req.Pages = viper.GetInt("7yip.pages")
 	req.HostIndex = 0
 	req.PortIndex = 1

@@ -42,7 +42,7 @@ func Parse(request *model.Request, result chan<- *model.Address) {
 			}
 
 			// parse by css selector
-			doc.Find(request.TrRegexp).Each(func(i int, s *goquery.Selection) {
+			doc.Find(request.TrRegular).Each(func(i int, s *goquery.Selection) {
 				td := s.Find("td")
 
 				address := model.NewAddress()

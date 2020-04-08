@@ -9,7 +9,7 @@ func IP89() *model.Request {
 	req := model.NewRequest()
 	req.WebName = "89ip"
 	req.WebURL = "http://www.89ip.cn/index_"
-	req.TrRegexp = ".layui-table tbody tr"
+	req.TrRegular = ".layui-table tbody tr"
 	req.Pages = viper.GetInt("89ip.pages")
 	req.HostIndex = 0
 	req.PortIndex = 1

@@ -1,6 +1,6 @@
 # proxygool - Go可扩展代理池
 
-> 默认以Redis作为存储
+> 默认以Redis作为存储，可基于Store接口扩展
 
 ![](https://img.shields.io/badge/language-Go-00B1D6.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/cmatrixprobe/proxygool)](https://goreportcard.com/report/github.com/cmatrixprobe/proxygool)
@@ -76,12 +76,13 @@ curl localhost:8888
 curl localhost:8888/https
 ```
 
-* 程序将定时检测心跳并删除并删除无效代理
+程序将定时检测心跳并删除无效代理
 
 ## 配置项
 
 * 常规部署需要将docker置为false
 * pages控制不同代理网站的爬取页数
+* fetch.proxy控制是否用代理池爬取
 
 ```yaml
 docker: true
@@ -121,19 +122,23 @@ kuaidaili:
 * 除了以上已实现的代理，可以在一分钟内轻松扩展代理接口
 
 ```go
-func IP89() *model.Request {
+func XXX() *model.Request {
     req := model.NewRequest()
-    req.WebName = "89ip"
-    req.WebURL = "http://www.89ip.cn/index_"
-    req.TrRegexp = ".layui-table tbody tr"
-    req.Pages = viper.GetInt("89ip.pages")
+    req.WebName = "xxx"
+    req.WebURL = "http://www.xxx.cn/index_"
+    req.TrRegular = ".table tbody tr"
+    req.Pages = viper.GetInt("xxx.pages")
     req.HostIndex = 0
     req.PortIndex = 1
-    req.Trim = true
+    req.ProtIndex = 3
     req.Protocol = func(s string) string {
-	return "http"
+	if s == "no" {
+	    return "http"
+	}
+	return "https"
     }
     return req
+    req.Trim = true
 }
 
 ```
@@ -150,10 +155,11 @@ requests = []*model.Request{
     //site.PLPSSL(),
     site.IP66(),
     site.IP89(),
+    site.XXX(),
 }
 ```
 
 ## 扩展存储方式
 
 1. 实现store.Store接口
-2. 调用store.SetCustomStore函数
+2. 调用store.SetCustomStore(s Store)
